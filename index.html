@@ -6,359 +6,341 @@
 <title>Jam WIB Jakarta</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #060a0f;
-    --panel: #0c1219;
-    --border: #1a2a3a;
-    --green: #00ff88;
-    --green-dim: #00aa55;
-    --green-glow: rgba(0,255,136,0.15);
-    --amber: #ffaa00;
-    --amber-dim: #cc7700;
-    --amber-glow: rgba(255,170,0,0.15);
-    --red: #ff3355;
-    --cyan: #00ddff;
-    --text: #8ab4cc;
-    --text-dim: #3a5566;
-  }
+:root {
+  --bg: #060a0f;
+  --panel: #0c1219;
+  --border: #1a2a3a;
+  --green: #00ff88;
+  --green-dim: #00aa55;
+  --amber: #ffaa00;
+  --amber-dim: #cc7700;
+  --red: #ff3355;
+  --cyan: #00ddff;
+  --text: #8ab4cc;
+  --text-dim: #3a5566;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow: hidden;
-  }
+html { scroll-behavior: smooth; }
 
-  /* Scanline overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.08) 2px,
-      rgba(0,0,0,0.08) 4px
-    );
-    pointer-events: none;
-    z-index: 999;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 40px;
+  overflow-x: hidden;
+}
 
-  /* Grid background */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+/* Scanline */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+  pointer-events: none; z-index: 999;
+}
+/* Grid */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(0,255,136,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,0.025) 1px,transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
 
-  .wrapper {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 640px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+.wrapper {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 680px;
+  display: flex; flex-direction: column; gap: 14px;
+}
 
-  /* Header */
-  .header {
-    text-align: center;
-    letter-spacing: 0.3em;
-    font-size: 11px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--border);
-  }
-  .header span { color: var(--green); }
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  letter-spacing: 0.3em; font-size: 10px;
+  color: var(--text-dim); text-transform: uppercase;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.header-dot { width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:hblink 2s ease-in-out infinite; }
+@keyframes hblink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.header span { color: var(--green); }
 
-  /* Main clock panel */
-  .clock-panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 32px 24px 24px;
-    position: relative;
-    box-shadow: 0 0 40px rgba(0,255,136,0.04), inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-  .clock-panel::before {
-    content: 'WIB / UTC+7 / JAKARTA';
-    position: absolute;
-    top: -1px; left: 20px;
-    background: var(--panel);
-    color: var(--green-dim);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    padding: 0 8px;
-    border-top: 1px solid var(--green-dim);
-  }
+/* ── PANEL base ── */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 28px 20px 20px;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0,0,0,0.4);
+}
+.panel-label {
+  position: absolute; top: -1px; left: 18px;
+  background: var(--panel);
+  font-size: 9px; letter-spacing: 0.2em; padding: 0 8px;
+  border-top: 1px solid var(--text-dim); color: var(--text-dim);
+}
 
-  .time-display {
-    font-family: 'Orbitron', monospace;
-    font-size: clamp(52px, 14vw, 96px);
-    font-weight: 900;
-    color: var(--green);
-    text-align: center;
-    letter-spacing: 0.05em;
-    text-shadow: 0 0 20px rgba(0,255,136,0.5), 0 0 60px rgba(0,255,136,0.2);
-    line-height: 1;
-    transition: text-shadow 0.1s;
-  }
-  .time-display .colon {
-    animation: blink 1s step-end infinite;
-    display: inline-block;
-    width: 0.3em;
-    text-align: center;
-  }
-  @keyframes blink { 50% { opacity: 0.1; } }
+/* ── CLOCK ── */
+#clockPanel .panel-label { color: var(--green-dim); border-color: var(--green-dim); }
 
-  .date-display {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 13px;
-    color: var(--text-dim);
-    letter-spacing: 0.15em;
-  }
-  .date-display .day-name { color: var(--text); }
+.time-display {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(54px, 15vw, 100px);
+  font-weight: 900; color: var(--green);
+  text-align: center; letter-spacing: 0.04em; line-height: 1;
+  text-shadow: 0 0 20px rgba(0,255,136,0.5), 0 0 60px rgba(0,255,136,0.15);
+}
+.time-display .colon { animation: blink 1s step-end infinite; display:inline-block; width:0.28em; text-align:center; }
+@keyframes blink { 50%{opacity:0.08} }
 
-  /* Progress bar — next trigger */
-  .next-section {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .next-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-  }
-  .next-label .countdown-next { color: var(--amber); font-weight: bold; }
+.date-row {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  margin-top: 10px; font-size: 12px; color: var(--text-dim); letter-spacing: 0.15em;
+}
+.date-row .day { color: var(--text); }
+.date-row .sep { color: var(--border); }
 
-  .progress-bar {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--amber-dim), var(--amber));
-    border-radius: 2px;
-    transition: width 0.5s linear;
-    box-shadow: 0 0 8px var(--amber-dim);
-  }
+/* second ring */
+.second-ring-wrap { margin: 16px auto 0; width: 100%; }
+.second-ring-track {
+  height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; position: relative;
+}
+.second-ring-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--green-dim), var(--green));
+  box-shadow: 0 0 6px var(--green-dim);
+  transition: width 0.3s linear;
+}
+.second-labels { display:flex; justify-content:space-between; font-size:9px; color:var(--text-dim); letter-spacing:0.1em; margin-top:4px; }
 
-  /* Stopwatch panel */
-  .sw-panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 24px;
-    position: relative;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  .sw-panel.active {
-    border-color: var(--amber);
-    box-shadow: 0 0 30px rgba(255,170,0,0.1), inset 0 0 20px rgba(255,170,0,0.03);
-  }
-  .sw-panel.idle {
-    border-color: var(--border);
-  }
+/* ── CLOCK STATS ROW ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+  margin-top: 14px;
+}
+.stat-box {
+  background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+  border-radius: 3px; padding: 10px 8px 8px; text-align: center;
+}
+.stat-val { font-family:'Orbitron',monospace; font-size:18px; font-weight:700; color:var(--cyan); }
+.stat-lbl { font-size:9px; color:var(--text-dim); letter-spacing:0.15em; margin-top:3px; }
 
-  .sw-panel::before {
-    content: 'STOPWATCH';
-    position: absolute;
-    top: -1px; left: 20px;
-    background: var(--panel);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    padding: 0 8px;
-    border-top: 1px solid;
-    transition: color 0.3s, border-color 0.3s;
-  }
-  .sw-panel.active::before { color: var(--amber); border-color: var(--amber); }
-  .sw-panel.idle::before   { color: var(--text-dim); border-color: var(--text-dim); }
+/* ── NEXT TRIGGER ── */
+.next-section { margin-top: 14px; display:flex; flex-direction:column; gap:5px; }
+.next-label { display:flex; justify-content:space-between; font-size:10px; letter-spacing:0.12em; color:var(--text-dim); text-transform:uppercase; }
+.next-label .val { color:var(--amber); font-weight:bold; }
+.progress-bar { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--amber-dim),var(--amber)); border-radius:2px; box-shadow:0 0 8px var(--amber-dim); transition:width 0.8s linear; }
 
-  .sw-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .sw-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--text-dim);
-    transition: background 0.3s, box-shadow 0.3s;
-  }
-  .sw-panel.active .sw-dot {
-    background: var(--amber);
-    box-shadow: 0 0 8px var(--amber);
-    animation: pulse 1s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%,100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.4); opacity: 0.7; }
-  }
-  .sw-status-text { color: var(--text-dim); }
-  .sw-panel.active .sw-status-text { color: var(--amber); }
+/* ── STOPWATCH ── */
+#swPanel { transition: border-color 0.4s, box-shadow 0.4s; }
+#swPanel.active { border-color:var(--amber); box-shadow:0 0 30px rgba(255,170,0,0.1),inset 0 0 20px rgba(255,170,0,0.03); }
+#swPanel.active .panel-label { color:var(--amber); border-color:var(--amber); }
 
-  .sw-time {
-    font-family: 'Orbitron', monospace;
-    font-size: clamp(36px, 9vw, 64px);
-    font-weight: 700;
-    color: var(--text-dim);
-    text-align: center;
-    letter-spacing: 0.08em;
-    transition: color 0.3s, text-shadow 0.3s;
-  }
-  .sw-panel.active .sw-time {
-    color: var(--amber);
-    text-shadow: 0 0 20px rgba(255,170,0,0.5);
-  }
+.sw-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.sw-status { display:flex; align-items:center; gap:8px; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; }
+.sw-dot { width:8px;height:8px;border-radius:50%;background:var(--text-dim);transition:all 0.3s; }
+#swPanel.active .sw-dot { background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.6} }
+.sw-status-text { color:var(--text-dim); transition:color 0.3s; }
+#swPanel.active .sw-status-text { color:var(--amber); }
+.sw-session-count { font-size:10px; color:var(--text-dim); letter-spacing:0.1em; }
+.sw-session-count span { color:var(--cyan); }
 
-  /* Stopwatch progress */
-  .sw-progress {
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .sw-progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-  }
-  .sw-progress-bar {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .sw-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--amber-dim), var(--amber));
-    border-radius: 2px;
-    transition: width 0.5s linear, background 0.3s;
-    box-shadow: 0 0 6px var(--amber-dim);
-    width: 0%;
-  }
-  .sw-panel.idle .sw-progress-fill {
-    background: var(--border);
-    box-shadow: none;
-  }
+.sw-time {
+  font-family:'Orbitron',monospace;
+  font-size:clamp(40px,10vw,68px); font-weight:700;
+  color:var(--text-dim); text-align:center; letter-spacing:0.08em;
+  transition:color 0.3s,text-shadow 0.3s;
+}
+#swPanel.active .sw-time { color:var(--amber); text-shadow:0 0 20px rgba(255,170,0,0.5); }
 
-  /* Session log */
-  .log-panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px;
-    position: relative;
-    max-height: 130px;
-    overflow: hidden;
-  }
-  .log-panel::before {
-    content: 'SESSION LOG';
-    position: absolute;
-    top: -1px; left: 20px;
-    background: var(--panel);
-    color: var(--text-dim);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    padding: 0 8px;
-    border-top: 1px solid var(--text-dim);
-  }
-  .log-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 11px;
-    margin-top: 4px;
-  }
-  .log-item {
-    display: flex;
-    gap: 12px;
-    color: var(--text-dim);
-    line-height: 1.5;
-    animation: fadeIn 0.4s ease;
-  }
-  .log-item.start .log-event { color: var(--amber); }
-  .log-item.stop  .log-event { color: var(--green); }
-  .log-time { color: var(--text-dim); min-width: 72px; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } }
+/* Tick visual flash */
+.sw-time.tick-flash { animation: tickflash 0.08s ease-out; }
+@keyframes tickflash { 0%{opacity:0.4} 100%{opacity:1} }
 
-  .log-empty { font-size: 11px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.1em; }
+.sw-progress { margin-top:14px; display:flex; flex-direction:column; gap:5px; }
+.sw-progress-label { display:flex; justify-content:space-between; font-size:10px; letter-spacing:0.1em; color:var(--text-dim); text-transform:uppercase; }
+.sw-progress-bar { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.sw-progress-fill { height:100%; background:linear-gradient(90deg,var(--amber-dim),var(--amber)); border-radius:2px; box-shadow:0 0 6px var(--amber-dim); width:0%; transition:width 0.8s linear; }
+#swPanel.idle .sw-progress-fill { background:var(--border); box-shadow:none; }
 
-  /* Footer */
-  .footer {
-    text-align: center;
-    font-size: 9px;
-    color: var(--text-dim);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
+/* ── ANALOG CLOCK ── */
+.analog-wrap { display:flex; justify-content:center; align-items:center; padding:4px 0 0; }
+.analog-clock {
+  position:relative; width:130px; height:130px;
+  border: 1px solid var(--border); border-radius:50%;
+  background: radial-gradient(circle at center, #0d1a22 60%, #08111a);
+  box-shadow: 0 0 20px rgba(0,255,136,0.06), inset 0 0 20px rgba(0,0,0,0.5);
+}
+.analog-clock::before {
+  content:''; position:absolute; inset:6px; border-radius:50%;
+  border:1px solid rgba(0,255,136,0.08);
+}
+.clock-center {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:6px; height:6px; border-radius:50%;
+  background:var(--green); box-shadow:0 0 6px var(--green); z-index:10;
+}
+.hand {
+  position:absolute; bottom:50%; left:50%;
+  transform-origin:bottom center;
+  border-radius:3px 3px 0 0;
+}
+.hand-hour { width:2px; height:32px; background:var(--text); margin-left:-1px; }
+.hand-min  { width:2px; height:42px; background:var(--green); margin-left:-1px; box-shadow:0 0 4px var(--green-dim); }
+.hand-sec  { width:1px; height:46px; background:var(--red); margin-left:-0.5px; box-shadow:0 0 4px var(--red); }
+/* tick marks */
+.tick-mark {
+  position:absolute; top:4px; left:50%; width:1px;
+  background:var(--border); transform-origin:bottom center;
+}
+
+/* ── TWO-COL ROW (analog + next) ── */
+.two-col { display:grid; grid-template-columns:150px 1fr; gap:14px; align-items:stretch; }
+.next-panel { background:var(--panel); border:1px solid var(--border); border-radius:4px; padding:20px 16px 16px; position:relative; }
+.next-panel .panel-label { top:-1px; left:14px; }
+
+/* ── WEATHER WIDGET ── */
+.world-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.tz-box { background:var(--panel); border:1px solid var(--border); border-radius:4px; padding:12px 10px; text-align:center; }
+.tz-city { font-size:9px; letter-spacing:0.15em; color:var(--text-dim); text-transform:uppercase; margin-bottom:4px; }
+.tz-time { font-family:'Orbitron',monospace; font-size:20px; font-weight:700; color:var(--text); }
+.tz-offset { font-size:9px; color:var(--text-dim); margin-top:2px; letter-spacing:0.1em; }
+
+/* ── SESSION LOG ── */
+.log-panel { max-height:120px; overflow:hidden; }
+.log-list { list-style:none; display:flex; flex-direction:column; gap:3px; font-size:11px; margin-top:2px; }
+.log-item { display:flex; gap:12px; color:var(--text-dim); line-height:1.5; animation:fadeIn 0.3s ease; }
+.log-item.start .log-event { color:var(--amber); }
+.log-item.stop  .log-event { color:var(--green); }
+.log-time { color:var(--text-dim); min-width:68px; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(-3px)} }
+.log-empty { font-size:10px; color:var(--text-dim); margin-top:2px; letter-spacing:0.1em; }
+
+/* ── CONTROLS ROW ── */
+.controls-row { display:flex; gap:10px; }
+.ctrl-btn {
+  flex:1; background:var(--panel); border:1px solid var(--border); border-radius:3px;
+  color:var(--text-dim); font-family:'Share Tech Mono',monospace;
+  font-size:10px; letter-spacing:0.15em; text-transform:uppercase;
+  padding:10px 8px; cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.ctrl-btn:hover { border-color:var(--green-dim); color:var(--green); }
+.ctrl-btn.on { border-color:var(--green); color:var(--green); box-shadow:0 0 10px rgba(0,255,136,0.12); }
+.ctrl-btn.warn-on { border-color:var(--amber); color:var(--amber); box-shadow:0 0 10px rgba(255,170,0,0.12); }
+
+.sound-hint { font-size:9px; color:var(--text-dim); letter-spacing:0.1em; text-align:center; margin-top:5px; }
+.sound-hint.warn { color:var(--amber-dim); }
+
+/* ── FOOTER ── */
+.footer { text-align:center; font-size:9px; color:var(--text-dim); letter-spacing:0.2em; text-transform:uppercase; padding-top:4px; }
 </style>
 </head>
 <body>
 <div class="wrapper">
 
+  <!-- HEADER -->
   <div class="header">
-    SISTEM WAKTU <span>REALTIME</span> · ZONA WAKTU INDONESIA BARAT
+    <div class="header-dot"></div>
+    SISTEM WAKTU <span>REALTIME</span> · WIB JAKARTA
+    <div class="header-dot"></div>
   </div>
 
-  <!-- Clock -->
-  <div class="clock-panel">
-    <div class="time-display" id="clockDisplay">
+  <!-- CLOCK PANEL -->
+  <div class="panel" id="clockPanel">
+    <div class="panel-label">WIB / UTC+7 / JAKARTA</div>
+    <div class="time-display">
       <span id="hh">00</span><span class="colon">:</span><span id="mm">00</span><span class="colon">:</span><span id="ss">00</span>
     </div>
-    <div class="date-display">
-      <span class="day-name" id="dayName">–</span>&nbsp;·&nbsp;<span id="dateStr">– – –</span>
+    <div class="date-row">
+      <span class="day" id="dayName">–</span>
+      <span class="sep">·</span>
+      <span id="dateStr">– – –</span>
+      <span class="sep">·</span>
+      <span id="weekNum">–</span>
     </div>
-
-    <div class="next-section">
-      <div class="next-label">
-        <span>stopwatch berikutnya</span>
-        <span class="countdown-next" id="nextCountdown">–:––</span>
+    <!-- Second progress bar -->
+    <div class="second-ring-wrap">
+      <div class="second-ring-track">
+        <div class="second-ring-fill" id="secFill" style="width:0%"></div>
       </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="nextProgress" style="width:0%"></div>
+      <div class="second-labels"><span>0s</span><span>15s</span><span>30s</span><span>45s</span><span>60s</span></div>
+    </div>
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val" id="statHour">–</div>
+        <div class="stat-lbl">JAM KE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="statDayPct">–</div>
+        <div class="stat-lbl">HARI BERLALU</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="statSession">–</div>
+        <div class="stat-lbl">SESI HARI INI</div>
       </div>
     </div>
   </div>
 
-  <!-- Stopwatch -->
-  <div class="sw-panel idle" id="swPanel">
-    <div class="sw-status">
-      <div class="sw-dot" id="swDot"></div>
-      <span class="sw-status-text" id="swStatusText">STANDBY</span>
+  <!-- TWO-COL: Analog + Next Stopwatch -->
+  <div class="two-col">
+    <!-- Analog Clock -->
+    <div class="panel" style="padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div class="panel-label">ANALOG</div>
+      <div class="analog-clock" id="analogClock">
+        <div class="clock-center"></div>
+        <div class="hand hand-hour" id="handHour"></div>
+        <div class="hand hand-min"  id="handMin"></div>
+        <div class="hand hand-sec"  id="handSec"></div>
+      </div>
+    </div>
+
+    <!-- Next Stopwatch -->
+    <div class="next-panel">
+      <div class="panel-label">JADWAL</div>
+      <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;">stopwatch berikutnya</div>
+      <div style="font-family:'Orbitron',monospace;font-size:32px;font-weight:700;color:var(--amber);text-shadow:0 0 15px rgba(255,170,0,0.4);" id="nextCountdown">–:––</div>
+      <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.1em;margin-top:3px;" id="nextStatus">–</div>
+      <div class="progress-bar" style="margin-top:10px;">
+        <div class="progress-fill" id="nextProgress" style="width:0%"></div>
+      </div>
+      <div style="margin-top:14px;font-size:9px;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px;">sisa sesi aktif</div>
+      <div style="font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--green);margin-bottom:5px;" id="swRemain">–:––</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="swRemainBar" style="width:0%;background:linear-gradient(90deg,var(--green-dim),var(--green));box-shadow:0 0 6px var(--green-dim);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORLD CLOCK -->
+  <div style="position:relative;">
+    <div style="position:absolute;top:-1px;left:18px;background:var(--bg);font-size:9px;letter-spacing:0.2em;padding:0 8px;color:var(--text-dim);border-top:1px solid var(--text-dim);z-index:2;">ZONA WAKTU DUNIA</div>
+    <div class="world-row" style="padding:8px 0 0;">
+      <div class="tz-box"><div class="tz-city">London</div><div class="tz-time" id="tzLondon">–</div><div class="tz-offset">UTC+1</div></div>
+      <div class="tz-box"><div class="tz-city">Tokyo</div><div class="tz-time" id="tzTokyo">–</div><div class="tz-offset">UTC+9</div></div>
+      <div class="tz-box"><div class="tz-city">New York</div><div class="tz-time" id="tzNY">–</div><div class="tz-offset">UTC-4</div></div>
+    </div>
+  </div>
+
+  <!-- STOPWATCH PANEL -->
+  <div class="panel idle" id="swPanel">
+    <div class="panel-label">STOPWATCH</div>
+    <div class="sw-top">
+      <div class="sw-status">
+        <div class="sw-dot"></div>
+        <span class="sw-status-text" id="swStatusText">STANDBY</span>
+      </div>
+      <div class="sw-session-count">SESI: <span id="sessionCount">0</span></div>
     </div>
     <div class="sw-time" id="swDisplay">00:00</div>
     <div class="sw-progress">
@@ -372,143 +354,344 @@
     </div>
   </div>
 
-  <!-- Log -->
-  <div class="log-panel">
+  <!-- SESSION LOG -->
+  <div class="panel log-panel">
+    <div class="panel-label">SESSION LOG</div>
     <ul class="log-list" id="logList">
       <li class="log-empty" id="logEmpty">· belum ada sesi tercatat</li>
     </ul>
   </div>
 
-  <div class="footer">AUTO STOPWATCH · AKTIF 30 MIN · ISTIRAHAT 30 MIN</div>
+  <!-- CONTROLS -->
+  <div class="controls-row">
+    <button class="ctrl-btn" id="soundBtn" onclick="toggleSound()">🔇 <span id="soundLabel">Aktifkan Suara</span></button>
+    <button class="ctrl-btn" id="tickBtn" onclick="toggleTick()">⏱ <span id="tickLabel">Tick Mati</span></button>
+    <button class="ctrl-btn" id="themeBtn" onclick="toggleTheme()">◑ <span>Tema</span></button>
+  </div>
+  <div class="sound-hint warn" id="soundHint">⚠ Klik "Aktifkan Suara" untuk izinkan audio browser</div>
 
+  <div class="footer">AUTO STOPWATCH · ON 30 MIN · OFF 30 MIN · WIB UTC+7</div>
 </div>
 
 <script>
-  const SW_DURATION = 30 * 60; // 30 menit dalam detik
-  const CYCLE = 60 * 60;       // total siklus 60 menit
+// ═══════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════
+const SW_DURATION = 30 * 60;
+const CYCLE       = 60 * 60;
+const DAYS_ID   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 
-  const DAYS_ID = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const MONTHS_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let swRunning   = false;
+let swElapsed   = 0;
+let logs        = [];
+let sessionCount = 0;
+let sessionToday = 0;
+let soundEnabled = false;
+let tickEnabled  = false;
+let lastSecond   = -1;
+let darkMode     = true; // default dark
 
-  let swRunning = false;
-  let swElapsed = 0; // detik, berapa lama stopwatch sudah jalan di sesi ini
-  let logs = [];
+// ═══════════════════════════════════════
+//  AUDIO ENGINE
+// ═══════════════════════════════════════
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
 
-  function pad(n) { return String(n).padStart(2,'0'); }
+function beep(freqs, durs, type='sine', vol=0.35) {
+  if (!soundEnabled) return;
+  const ctx = getCtx();
+  let t = ctx.currentTime;
+  freqs.forEach((f,i) => {
+    const osc = ctx.createOscillator();
+    const g   = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.001, t + durs[i]);
+    osc.start(t); osc.stop(t + durs[i]);
+    t += durs[i] * 0.75;
+  });
+}
 
-  function getWIBNow() {
-    // WIB = UTC+7
-    const now = new Date();
-    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-    return new Date(utc + 7 * 3600000);
+function playTick(isStrong) {
+  if (!soundEnabled || !tickEnabled) return;
+  const ctx = getCtx();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.04, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 8);
+  }
+  const src  = ctx.createBufferSource();
+  const filt = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+  filt.type = 'highpass'; filt.frequency.value = isStrong ? 1800 : 2800;
+  gain.gain.value = isStrong ? 0.5 : 0.22;
+  src.buffer = buf;
+  src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+  src.start();
+}
+
+function playStart() { beep([523,659,784],[0.1,0.1,0.22],'square',0.28); }
+function playStop()  { beep([784,523,349],[0.12,0.12,0.3],'sine',0.3); }
+function playAlert() { beep([880,880],[0.06,0.06],'sine',0.15); }
+
+// ═══════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function getWIBNow() {
+  const now = new Date();
+  return new Date(now.getTime() + now.getTimezoneOffset()*60000 + 7*3600000);
+}
+
+function getWeekNumber(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+}
+
+function tzTime(offsetHours) {
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset()*60000;
+  const d = new Date(utc + offsetHours*3600000);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// ═══════════════════════════════════════
+//  CLOCK UPDATE
+// ═══════════════════════════════════════
+function updateClock() {
+  const wib = getWIBNow();
+  const h = wib.getHours(), m = wib.getMinutes(), s = wib.getSeconds();
+
+  // Digital
+  document.getElementById('hh').textContent = pad(h);
+  document.getElementById('mm').textContent = pad(m);
+  document.getElementById('ss').textContent = pad(s);
+  document.getElementById('dayName').textContent  = DAYS_ID[wib.getDay()];
+  document.getElementById('dateStr').textContent  = `${pad(wib.getDate())} ${MONTHS_ID[wib.getMonth()]} ${wib.getFullYear()}`;
+  document.getElementById('weekNum').textContent  = `MINGGU KE-${getWeekNumber(wib)}`;
+
+  // Second ring
+  document.getElementById('secFill').style.width = (s / 59 * 100) + '%';
+
+  // Stats
+  const totalSecDay = h*3600 + m*60 + s;
+  document.getElementById('statHour').textContent   = h + 1;
+  document.getElementById('statDayPct').textContent = Math.floor(totalSecDay / 864) + '%';
+  document.getElementById('statSession').textContent = sessionToday;
+
+  // Analog
+  const secDeg  = s * 6;
+  const minDeg  = m * 6 + s * 0.1;
+  const hourDeg = (h % 12) * 30 + m * 0.5;
+  document.getElementById('handSec').style.transform  = `translateX(-50%) rotate(${secDeg}deg)`;
+  document.getElementById('handMin').style.transform  = `translateX(-50%) rotate(${minDeg}deg)`;
+  document.getElementById('handHour').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+
+  // World clocks
+  document.getElementById('tzLondon').textContent = tzTime(1);
+  document.getElementById('tzTokyo').textContent  = tzTime(9);
+  document.getElementById('tzNY').textContent     = tzTime(-4);
+
+  // Siklus
+  const posInCycle = (m * 60 + s) % CYCLE;
+  const shouldRun  = posInCycle < SW_DURATION;
+
+  if (shouldRun && !swRunning) startSW(wib);
+  if (!shouldRun && swRunning) stopSW(wib);
+
+  // Next countdown
+  if (!shouldRun) {
+    const secsLeft = CYCLE - posInCycle;
+    document.getElementById('nextCountdown').textContent = `${pad(Math.floor(secsLeft/60))}:${pad(secsLeft%60)}`;
+    document.getElementById('nextStatus').textContent = 'menunggu sesi berikutnya...';
+    const pct = 100 - (secsLeft / (CYCLE - SW_DURATION)) * 100;
+    document.getElementById('nextProgress').style.width = Math.max(0, pct) + '%';
+    document.getElementById('swRemain').textContent = '–:––';
+    document.getElementById('swRemainBar').style.width = '0%';
+  } else {
+    document.getElementById('nextCountdown').textContent = 'AKTIF';
+    document.getElementById('nextStatus').textContent = '● stopwatch sedang berjalan';
+    document.getElementById('nextProgress').style.width = '100%';
+    // sisa
+    const remain = SW_DURATION - posInCycle;
+    document.getElementById('swRemain').textContent = `${pad(Math.floor(remain/60))}:${pad(remain%60)}`;
+    document.getElementById('swRemainBar').style.width = (remain / SW_DURATION * 100) + '%';
   }
 
-  function updateClock() {
-    const wib = getWIBNow();
-    const h = wib.getHours(), m = wib.getMinutes(), s = wib.getSeconds();
-    document.getElementById('hh').textContent = pad(h);
-    document.getElementById('mm').textContent = pad(m);
-    document.getElementById('ss').textContent = pad(s);
-
-    document.getElementById('dayName').textContent = DAYS_ID[wib.getDay()];
-    document.getElementById('dateStr').textContent =
-      `${pad(wib.getDate())} ${MONTHS_ID[wib.getMonth()]} ${wib.getFullYear()}`;
-
-    // Hitung posisi dalam siklus 60 menit berdasarkan menit+detik
-    const totalSec = (m * 60 + s); // 0–3599
-    const posInCycle = totalSec % CYCLE; // 0–3599
-
-    // Menit genap 0–29: stopwatch ON (posInCycle 0–1799)
-    // Menit genap 30–59: stopwatch OFF (posInCycle 1800–3599)
-    const shouldRun = posInCycle < SW_DURATION;
-
-    if (shouldRun && !swRunning) startSW(wib);
-    if (!shouldRun && swRunning) stopSW(wib);
-
-    // Update next countdown
-    if (!shouldRun) {
-      const secsUntilNext = CYCLE - posInCycle; // detik sampai menit berikutnya yang genap
-      const nm = Math.floor(secsUntilNext / 60);
-      const ns = secsUntilNext % 60;
-      document.getElementById('nextCountdown').textContent = `${pad(nm)}:${pad(ns)}`;
-      const pct = ((CYCLE - posInCycle) / (CYCLE - SW_DURATION)) * 100;
-      document.getElementById('nextProgress').style.width = Math.min(100, 100 - (secsUntilNext / (CYCLE - SW_DURATION)) * 100) + '%';
-    } else {
-      document.getElementById('nextCountdown').textContent = `AKTIF`;
-      document.getElementById('nextProgress').style.width = '100%';
-    }
+  // Tick sound on second change
+  if (s !== lastSecond) {
+    lastSecond = s;
+    const isStrong = (s % 10 === 0);
+    playTick(isStrong);
   }
+}
 
-  function startSW(wib) {
-    swRunning = true;
-    // Hitung elapsed berdasarkan posisi aktual
-    const m = wib.getMinutes(), s = wib.getSeconds();
-    const posInCycle = (m * 60 + s) % CYCLE;
-    swElapsed = posInCycle; // berapa detik sudah berjalan dalam sesi ON ini
+// ═══════════════════════════════════════
+//  STOPWATCH
+// ═══════════════════════════════════════
+function startSW(wib) {
+  swRunning = true;
+  sessionCount++;
+  sessionToday++;
+  const posInCycle = ((wib.getMinutes()*60 + wib.getSeconds()) % CYCLE);
+  swElapsed = posInCycle;
 
-    document.getElementById('swPanel').className = 'sw-panel active';
-    document.getElementById('swStatusText').textContent = 'RUNNING';
-    addLog(wib, 'start', 'Stopwatch dimulai');
+  document.getElementById('swPanel').className    = 'panel active';
+  document.getElementById('swStatusText').textContent = 'RUNNING';
+  document.getElementById('sessionCount').textContent = sessionCount;
+  document.getElementById('statSession').textContent  = sessionToday;
+  playStart();
+  addLog(wib, 'start', 'Stopwatch mulai');
+}
+
+function stopSW(wib) {
+  swRunning = false;
+  swElapsed = 0;
+  document.getElementById('swPanel').className    = 'panel idle';
+  document.getElementById('swStatusText').textContent = 'STANDBY';
+  document.getElementById('swDisplay').textContent    = '00:00';
+  document.getElementById('swProgressFill').style.width = '0%';
+  document.getElementById('swDurLabel').textContent = '0 / 30 menit';
+  playStop();
+  addLog(wib, 'stop', 'Stopwatch selesai');
+}
+
+function updateSW() {
+  if (!swRunning) return;
+  const wib = getWIBNow();
+  const posInCycle = (wib.getMinutes()*60 + wib.getSeconds()) % CYCLE;
+  swElapsed = Math.min(posInCycle, SW_DURATION);
+
+  const mm = Math.floor(swElapsed/60), ss = swElapsed%60;
+  const el = document.getElementById('swDisplay');
+  el.textContent = `${pad(mm)}:${pad(ss)}`;
+
+  // Tick flash animasi
+  el.classList.remove('tick-flash');
+  void el.offsetWidth;
+  el.classList.add('tick-flash');
+
+  document.getElementById('swProgressFill').style.width = (swElapsed/SW_DURATION*100)+'%';
+  document.getElementById('swDurLabel').textContent = `${mm} / 30 menit`;
+
+  // Alert 5 menit tersisa
+  if (swElapsed === SW_DURATION - 300) playAlert();
+}
+
+// ═══════════════════════════════════════
+//  LOG
+// ═══════════════════════════════════════
+function addLog(wib, type, msg) {
+  const ts = `${pad(wib.getHours())}:${pad(wib.getMinutes())}:${pad(wib.getSeconds())}`;
+  logs.unshift({ time:ts, type, msg });
+  if (logs.length > 10) logs.pop();
+  renderLog();
+}
+function renderLog() {
+  const list  = document.getElementById('logList');
+  const empty = document.getElementById('logEmpty');
+  if (!logs.length) { if(empty) empty.style.display=''; return; }
+  if (empty) empty.style.display = 'none';
+  list.innerHTML = logs.map(l=>`
+    <li class="log-item ${l.type}">
+      <span class="log-time">${l.time}</span>
+      <span class="log-event">${l.msg}</span>
+    </li>`).join('');
+}
+
+// ═══════════════════════════════════════
+//  CONTROLS
+// ═══════════════════════════════════════
+function toggleSound() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  audioCtx.resume();
+  soundEnabled = !soundEnabled;
+  const btn  = document.getElementById('soundBtn');
+  const lbl  = document.getElementById('soundLabel');
+  const hint = document.getElementById('soundHint');
+  if (soundEnabled) {
+    btn.className = 'ctrl-btn on';
+    btn.textContent = ''; btn.innerHTML = '🔊 <span>Suara Aktif</span>';
+    hint.textContent = '✔ Suara notifikasi aktif';
+    hint.className = 'sound-hint';
+    beep([880],[0.07],'sine',0.18);
+  } else {
+    btn.className = 'ctrl-btn';
+    btn.innerHTML = '🔇 <span id="soundLabel">Suara Mati</span>';
+    hint.textContent = '⚠ Klik "Aktifkan Suara" untuk izinkan audio browser';
+    hint.className = 'sound-hint warn';
   }
+}
 
-  function stopSW(wib) {
-    swRunning = false;
-    swElapsed = 0;
-    document.getElementById('swPanel').className = 'sw-panel idle';
-    document.getElementById('swStatusText').textContent = 'STANDBY';
-    document.getElementById('swDisplay').textContent = '00:00';
-    document.getElementById('swProgressFill').style.width = '0%';
-    document.getElementById('swDurLabel').textContent = '0 / 30 menit';
-    addLog(wib, 'stop', 'Stopwatch dihentikan');
+function toggleTick() {
+  tickEnabled = !tickEnabled;
+  const btn = document.getElementById('tickBtn');
+  btn.className = tickEnabled ? 'ctrl-btn warn-on' : 'ctrl-btn';
+  btn.innerHTML = tickEnabled ? '⏱ <span>Tick Aktif</span>' : '⏱ <span>Tick Mati</span>';
+}
+
+function toggleTheme() {
+  darkMode = !darkMode;
+  const r = document.documentElement.style;
+  if (!darkMode) {
+    r.setProperty('--bg','#f0f2f0');
+    r.setProperty('--panel','#e4e8e4');
+    r.setProperty('--border','#c0ccc0');
+    r.setProperty('--text','#2a4a3a');
+    r.setProperty('--text-dim','#7a9a8a');
+  } else {
+    r.setProperty('--bg','#060a0f');
+    r.setProperty('--panel','#0c1219');
+    r.setProperty('--border','#1a2a3a');
+    r.setProperty('--text','#8ab4cc');
+    r.setProperty('--text-dim','#3a5566');
   }
+}
 
-  function updateSW() {
-    if (!swRunning) return;
-    const wib = getWIBNow();
-    const m = wib.getMinutes(), s = wib.getSeconds();
-    const posInCycle = (m * 60 + s) % CYCLE;
-    swElapsed = posInCycle < SW_DURATION ? posInCycle : SW_DURATION;
-
-    const mm = Math.floor(swElapsed / 60);
-    const ss = swElapsed % 60;
-    document.getElementById('swDisplay').textContent = `${pad(mm)}:${pad(ss)}`;
-
-    const pct = (swElapsed / SW_DURATION) * 100;
-    document.getElementById('swProgressFill').style.width = pct + '%';
-    document.getElementById('swDurLabel').textContent = `${mm} / 30 menit`;
+// ═══════════════════════════════════════
+//  BUILD ANALOG TICK MARKS
+// ═══════════════════════════════════════
+(function buildTicks() {
+  const clock = document.getElementById('analogClock');
+  for (let i = 0; i < 60; i++) {
+    const t = document.createElement('div');
+    t.className = 'tick-mark';
+    const isHour = i % 5 === 0;
+    t.style.height = isHour ? '8px' : '4px';
+    t.style.background = isHour ? 'var(--green-dim)' : 'var(--border)';
+    // center 65px = radius
+    t.style.transformOrigin = 'bottom center';
+    t.style.transform = `translateX(-50%) rotate(${i*6}deg)`;
+    // position at top
+    t.style.top = '4px';
+    clock.appendChild(t);
   }
+})();
 
-  function addLog(wib, type, msg) {
-    const timeStr = `${pad(wib.getHours())}:${pad(wib.getMinutes())}:${pad(wib.getSeconds())}`;
-    logs.unshift({ time: timeStr, type, msg });
-    if (logs.length > 8) logs.pop();
-    renderLog();
-  }
-
-  function renderLog() {
-    const list = document.getElementById('logList');
-    const empty = document.getElementById('logEmpty');
-    if (logs.length === 0) {
-      if (empty) empty.style.display = '';
-      return;
-    }
-    if (empty) empty.style.display = 'none';
-    list.innerHTML = logs.map(l => `
-      <li class="log-item ${l.type}">
-        <span class="log-time">${l.time}</span>
-        <span class="log-event">${l.msg}</span>
-      </li>
-    `).join('');
-  }
-
-  // Tick setiap detik
-  function tick() {
-    updateClock();
-    updateSW();
-  }
-
-  tick();
-  setInterval(tick, 1000);
+// ═══════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════
+function tick() {
+  updateClock();
+  updateSW();
+}
+tick();
+setInterval(tick, 1000);
 </script>
 </body>
 </html>
